@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sorteador Único</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: #0e0e10;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #00ffe1;
+    }
+
+    .container {
+      background: #1a1a1d;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 200, 0.2);
+      text-align: center;
+      width: 300px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+      text-align: center;
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      background-color: #00ffe1;
+      color: #000;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #00b8a9;
+    }
+
+    .output {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #ffffff;
+      margin-top: 10px;
+    }
+
+    .disabled {
+      background-color: #555 !important;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <h1>Sorteador Único</h1>
+  <div class="container">
+    <input id="maxNumber" type="number" placeholder="Digite o número máximo" min="1" />
+    <div class="btn-group">
+      <button id="startBtn">Iniciar</button>
+      <button id="pauseBtn">Pausar</button>
+      <button id="resetBtn">Desligar</button>
+    </div>
+    <div class="output" id="output">?</div>
+  </div>
+
+  <script>
+    let availableNumbers = [];
+    let intervalId = null;
+    let isRunning = false;
+
+    const maxNumberInput = document.getElementById('maxNumber');
+    const startBtn = document.getElementById('startBtn');
+    const pauseBtn = document.getElementById('pauseBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    const output = document.getElementById('output');
+
+    function initNumbers(max) {
+      availableNumbers = [];
+      for (let i = 1; i <= max; i++) {
+        availableNumbers.push(i);
+      }
+    }
+
+    function getRandomNumber() {
+      if (availableNumbers.length === 0) {
+        output.textContent = 'Fim';
+        clearInterval(intervalId);
+        return;
+      }
+
+      const index = Math.floor(Math.random() * availableNumbers.length);
+      const number = availableNumbers.splice(index, 1)[0];
+      output.textContent = number;
+    }
+
+    startBtn.addEventListener('click', () => {
+      const max = parseInt(maxNumberInput.value);
+      if (!max || max <= 0) {
+        alert('Digite um número válido!');
+        return;
+      }
+
+      if (!isRunning) {
+        if (availableNumbers.length === 0) {
+          initNumbers(max);
+        }
+        intervalId = setInterval(getRandomNumber, 1000);
+        isRunning = true;
+      }
+    });
+
+    pauseBtn.addEventListener('click', () => {
+      clearInterval(intervalId);
+      isRunning = false;
+    });
+
+    resetBtn.addEventListener('click', () => {
+      clearInterval(intervalId);
+      isRunning = false;
+      availableNumbers = [];
+      maxNumberInput.value = '';
+      output.textContent = '?';
+    });
+  </script>
+</body>
+</html>
